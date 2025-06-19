@@ -1,0 +1,202 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding-top: 70px;
+  padding-bottom: 40px;
+}
+
+header {
+  background-color: rgb(147, 0, 0);
+  padding: 5px;
+  font-size: 1rem;
+  text-align: left;
+  color: white;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.dissertation {
+  display: flex;
+  font-size: 0.5rem;
+  color: white;
+  justify-content: space-between;
+  align-items: center;
+  width: 99%;
+  margin: 0 auto;
+}
+
+footer {
+  background-color: rgb(147, 0, 0);
+  padding: 5px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+}
+
+#classResult {
+  background-color: rgb(147, 0, 0);
+  height: 25px;
+  color: #fff;
+  margin-top: 20px;
+  text-align: center;
+}
+#classResult h4{
+ margin: 0;
+ padding: 4px;
+}
+.container {
+  width: 80%;
+  margin: 0 auto;
+}
+
+.upload-form {
+  display: flex;
+  align-items: top;
+  gap: 10px;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.file-upload-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+input[type="file"] {
+  width: 95%;
+  max-width: 100%;
+  color: rgb(0, 0, 0, 1);
+  background-color: #FFF9EC;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 50px;
+}
+
+#file-name {
+  font-style: italic;
+  font-size: 0.9rem;
+  color: #555;
+  margin-top: 5px;
+}
+
+button {
+  padding: 8px;
+  cursor: pointer;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  font-size: 1rem;
+  border-radius: 4px;
+  white-space: nowrap;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/*ESTILO DA TABELA*/
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 2px 0;
+  font-size: 1rem;
+  text-align: left;
+  table-layout: auto;
+}
+
+thead {
+  background-color: rgb(147, 0, 0);
+  color: white;
+  font-weight: bold;
+  text-align: left;
+}
+
+thead th:first-child {
+  text-align: center;
+}
+
+th,
+td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  white-space: normal;
+}
+
+tbody tr:hover {
+  background-color: #e0e0e0;
+  transition: background-color 0.3s;
+}
+
+tbody td:first-child {
+  max-width: 500px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+}
+
+th,
+td {
+  width: auto;
+}
+
+th {
+  min-width: 150px;
+}
+
+select {
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background: white;
+}
+
+/* SPINNER */
+
+#spinner {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+}
+
+.loader {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  display: inline-block;
+  position: relative;
+  background: linear-gradient(0deg, rgba(147, 0, 0, 0.2) 33%, rgba(147,0,0,1) 100%);
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+.loader::after {
+  content: '';  
+  box-sizing: border-box;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 63px;
+  height: 63px;
+  border-radius: 50%;
+  background: white;
+}
+@keyframes rotation {
+  0% { transform: rotate(0deg) }
+  100% { transform: rotate(360deg)}
+} 

@@ -1,0 +1,49 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<lang="en-US">
+
+    <head>
+        <meta charset="utf-8">
+        <title>Upload de PDF</title>
+        <!-- Importar CSS externo -->
+        <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    </head>
+    <body>
+
+    <header>
+        <h4>Software Requirements Classification</h4>
+    </header>
+
+        <div class="container">
+            <h2>Send PDF for Requirements Classification</h2>
+            <div class="file-upload-container">
+                <input type="file" id="pdfInput" name="pdf_file" accept="application/pdf" required>
+            </div>
+            <button type="submit" id="uploadBtn">Send</button>
+        </div>
+        
+        <div id="classResult">
+            <h4>Classification Results</h4>
+        </div>
+        
+        <div id="spinner" class="loader"></div>
+        
+        <div>
+            <table id="resultsTable">
+            </table>
+        </div>
+    
+
+        <button id="saveBtn" style="display: none;">Save and Download</button>
+        <!-- Importar JS externo ao final do body -->
+        <script type="module" src="{% static 'js/main.js' %}?v={{ timestamp }}"></script>
+    <footer>
+        <div class="dissertation">
+            <p> Dissertação Paulo Henrique Pianissola de Cerqueira. </p>
+            <p> Universidade do Minho. 2025. </p>
+        </div>
+    </footer>
+</body>
+
+</html>
