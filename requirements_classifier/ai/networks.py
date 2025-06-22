@@ -1,6 +1,6 @@
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
-from requirements_classifier.models.classifier import BertForMultiTask
+from requirements_classifier.ai.classifier import BertForMultiTask
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 

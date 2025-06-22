@@ -3,8 +3,8 @@ import re
 import nltk
 from sentence_transformers import SentenceTransformer, util
 from nltk.tokenize.punkt import PunktSentenceTokenizer, PunktParameters
-from .pdf_utils import PDFUtils
-from requirements_classifier.models.networks import load_phi4_model, load_multitask_classifier, generate_requirements
+from .pdf_services import PDFUtils
+from requirements_classifier.ai.networks import load_phi4_model, load_multitask_classifier, generate_requirements
 
 # Definir dispositivo para GPU
 device = "cuda" if torch.cuda.is_available() else "cpu"

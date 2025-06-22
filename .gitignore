@@ -171,6 +171,7 @@ cython_debug/
 ### Python ###
 # Byte-compiled / optimized / DLL files
 requirements_classifier/distilbert
+highlighted
 # C extensions
 
 # Distribution / packaging
