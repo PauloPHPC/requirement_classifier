@@ -53,10 +53,10 @@ def save_requirements(request):
     save_requirements_to_db(requirements)
 
     grouped_by_page = PDF_HELPER.group_requirements_by_page(requirements)
-    highlighted_path = PDF_HELPER.highligh_pdf(pdf_path, grouped_by_page)
+    highlighted_url = PDF_HELPER.highligh_pdf(pdf_path, grouped_by_page)
 
     return JsonResponse({
         "message": "Requirements saved successfully",
-        "highlighted_pdf_path": highlighted_path
+        "highlighted_pdf_url": highlighted_url
     })
 

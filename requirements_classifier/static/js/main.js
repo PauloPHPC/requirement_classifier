@@ -111,11 +111,11 @@ document.getElementById("saveBtn").addEventListener("click", async function () {
     const message = await response.json();
     alert(message.message || "Error while saving requirements.");
 
-    const fixedPath = "/" + message.highlighted_pdf_path.replace(/\\/g, "/");
-
-    if (message.highlighted_pdf_path) {
+    //const fixedPath = "/" + message.highlighted_pdf_url.replace(/\\/g, "/");
+    console.log(message)
+    if (message.highlighted_pdf_url) {
       const link = document.createElement("a");
-      link.href = fixedPath;
+      link.href = message.highlighted_pdf_url;
       link.download = "highlighted_requirements.pdf";
       document.body.appendChild(link);
       link.click();
