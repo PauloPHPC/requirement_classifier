@@ -77,7 +77,7 @@ class RequirementsClassifier:
         """
 
         self.system_prompt = """
-        You are an expert in extracting SYSTEM requirements from texts. The definition of a SYSTEM A set of interacting components that work together to achieve a specific goal or fulfill a defined purpose. The format have to be: “The <system/entity> shall <funcionality> <description>. Always ignore numbers. Always make each requirement less than two sentences.. The requirements may have technical aspects of the system”
+        You are an expert in extracting SYSTEM requirements from texts. The definition of a SYSTEM A set of interacting components that work together to achieve a specific goal or fulfill a defined purpose. The format has to be: “The <system/entity> shall <functionality> <description>. Always ignore numbers. Always make each requirement less than two sentences. The requirements may have technical aspects of the system”
         """
 
     def search_web(self, text, k=3):
