@@ -91,6 +91,7 @@ class RequirementsClassifier:
 
         self.system_prompt = """
         Extract information and generate system software requirements explicitly from the document.
+        The system is a set of interacting components that work together to achieve a specific goal or fulfill a defined purpose.
 
         Follow these steps strictly:
 
