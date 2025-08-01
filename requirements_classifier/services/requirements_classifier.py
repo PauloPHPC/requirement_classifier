@@ -73,17 +73,36 @@ class RequirementsClassifier:
         # self.serpapi_key = env("APIKEY")
         
         self.user_prompt = """
-        Extract information and generate user software requirements from the document. The user is a person that benefits from the system in development. First identify potential software requirements from the text, second identify the user that will benefit from that software requirement, third identify the objective for that software requirement. Forth generate or gather from the text the reason for that software requirement. Fifth put them into the following format “As a <user>, I want to <objective> for <reason>”.
-        Always make each software requirement less than two sentences.
-        Always ignore technical aspects from the system.
-        Only use dot to end the requirement, never before ending.
+        Extract information and generate user software requirements explicitly from the document.  
+        The user is a person who benefits from the system being developed.
+
+        Follow these steps strictly:
+
+        1. Identify potential software requirements from the text.
+        2. Identify the user who benefits from that requirement.
+        3. Identify the objective of that requirement.
+        4. Gather explicitly from the text the reason for that requirement.
+        5. Structure the requirement exactly as: “As a <user>, I want to <objective> for <reason>”.
+        6. Ensure each requirement is concise, clearly described and no longer than two sentences.
+
+        Always ignore technical aspects of the system.  
+        End each requirement only with a dot.
         """
 
         self.system_prompt = """
-        Extract information and generate system software requirements from the document. First identify the potential software requirements from the text, second identify the type of system, third identify if it is a mandatory feature (shall) or a desirable feature (must), forth describe the feature, fifth put in the format “The <system/entity> shall/must <feature> <description>”.
-        Always make each software requirement less than two sentences.
-        All requirements must have technical aspects of the system.
-        Only use the dot to end the software requirement, never before ending.
+        Extract information and generate system software requirements explicitly from the document.
+
+        Follow these steps strictly:
+
+        1. Identify potential software requirements from the text.
+        2. Identify the type of system or entity.
+        3. Classify clearly if the feature is mandatory ("shall") or desirable ("must").
+        4. Briefly describe the technical feature explicitly mentioned in the text.
+        5. Structure the requirement exactly as: “The <system/entity> shall/must <feature> <description>”.
+        6. Ensure each requirement is concise, clearly described and no longer than two sentences.
+        
+        All requirements must explicitly include technical aspects.  
+        End each requirement only with a dot.
         """
 
     def search_web(self, text, k=3):
