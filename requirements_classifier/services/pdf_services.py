@@ -4,6 +4,7 @@ import random
 import os 
 import uuid
 import tempfile
+import re
 from django.conf import settings
 
 class PDFUtils:
@@ -39,15 +40,42 @@ class PDFUtils:
         Extracts the texts from each page of the PDF and returns a list of Strings.
         """
 
+        doc = fitz.open(pdf_path)
         texts = []
-        with open(pdf_path, "rb") as file:
-            reader = PyPDF2.PdfReader(file)
-            for page_num in range(len(reader.pages)):
-                page = reader.pages[page_num]
-                text = page.extract_text()
-                texts.append(text)
-
+        for page in doc:
+            raw_text = page.get_text()
+            clean_text = self.clean_page_text(raw_text)
+            texts.append(clean_text)
         return texts
+    
+    def clean_page_text(self, text):
+        lines = text.splitlines()
+        merged = []
+        
+        for i, line in enumerate(lines):
+            line = line.strip()
+            if not line:
+                merged.append("")
+                continue
+
+            if i + 1 < len(lines) and not re.match(r".*[\.\:\!\?]\s*$", line):
+                next_line = lines[i+1].strip()
+                line += " " + next_line
+                lines[i+1] = ""
+            merged.append(line)
+
+        cleaned = []
+        last_blank = False
+        for line in merged:
+            if line == "":
+                if not last_blank:
+                    cleaned.append(line)
+                last_blank = True
+            else:
+                cleaned.append(line)
+                last_blank = False
+
+        return "\n".join(cleaned)
     
     def highligh_pdf(self, input_pdf_path, requirements_by_page):
         """
