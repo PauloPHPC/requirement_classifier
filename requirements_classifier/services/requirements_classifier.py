@@ -73,14 +73,14 @@ class RequirementsClassifier:
         # self.serpapi_key = env("APIKEY")
         
         self.user_prompt = """
-        You are an expert in extracting information and generating user software requirements from documents. The user is a person that benefits from the system in development. First identify potential software requirements from the text, second identify the user that will benefit from that software requirement, third identify the objective for that software requirement. Forth generate or gather from the text the reason for that software requirement. Fifth put them into the following format “As a <user>, I want to <objective> for <reason>”.
+        Extract information and generate user software requirements from the document. The user is a person that benefits from the system in development. First identify potential software requirements from the text, second identify the user that will benefit from that software requirement, third identify the objective for that software requirement. Forth generate or gather from the text the reason for that software requirement. Fifth put them into the following format “As a <user>, I want to <objective> for <reason>”.
         Always make each software requirement less than two sentences.
         Always ignore technical aspects from the system.
         Only use dot to end the requirement, never before ending.
         """
 
         self.system_prompt = """
-        You are an expert in extracting information and generating system software requirements from documents. First identify the potential software requirements from the text, second identify the type of system, third identify if it is a mandatory feature (shall) or a desirable feature (must), forth describe the feature, fifth put in the format “The <system/entity> shall/must <feature> <description>”.
+        Extract information and generate system software requirements from the document. First identify the potential software requirements from the text, second identify the type of system, third identify if it is a mandatory feature (shall) or a desirable feature (must), forth describe the feature, fifth put in the format “The <system/entity> shall/must <feature> <description>”.
         Always make each software requirement less than two sentences.
         All requirements must have technical aspects of the system.
         Only use the dot to end the software requirement, never before ending.
