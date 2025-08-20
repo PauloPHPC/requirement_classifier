@@ -1,6 +1,6 @@
 // import { tableHead, generateTable } from './tableFunctions.js';
 import { buildRequirementsTable } from "./tableFunctions.js";
-import { postData } from "./api.js";
+import { postData, postForBlob } from "./api.js";
 
 // let extracted_requirements = [];
 window.extracted_requirements = [];
@@ -87,27 +87,26 @@ saveBtn.addEventListener("click", async () => {
 // Exports the requirements to a CSV file
 exportCsvBtn.addEventListener("click", async () => {
   try {
-    const updatedRequirements = buildRequirementsTable.extractData(window.extracted_requirements, uploadedFileName);
+    const updatedRequirements = buildRequirementsTable.extractData(
+      window.extracted_requirements,
+      uploadedFileName
+    );
 
-    const response = await postData("/export_csv/", {
-      requirements: updatedRequirements,
-      pdf_path: pdfPath,
-    }, true);
+    const blob = await postForBlob(
+      "/export_csv/",
+      { requirements: updatedRequirements, filename: (uploadedFileName || "requirements").replace(/\.[^/.]+$/, "") },
+      true
+    );
 
-    if (response.error) {
-      alert("Error exporting CSV: " + response.error);
-      return;
-    }
-
-    const blob = await response.blob();
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${(uploadedFileName || "requirements")}.replace(/\.[^/.]+$/, "")}.csv`;
+
+    a.download = `${(uploadedFileName || "requirements").replace(/\.[^/.]+$/, "")}.csv`;
     document.body.appendChild(a);
     a.click();
     a.remove();
-    URL.revokeObjectURL(url);
+    window.URL.revokeObjectURL(url);
   } catch (err) {
     console.error(err);
     alert("Failed to export CSV.");
