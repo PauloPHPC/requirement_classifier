@@ -15,6 +15,7 @@ const saveBtn = document.getElementById("saveBtn");
 const classResult = document.getElementById("classResult");
 const resultsTable = document.getElementById("resultsTable");
 const spinner = document.getElementById("spinner");
+const exportCsvBtn = document.getElementById("exportCsvBtn");
 
 // Change the input name from Choose PDF to the files name
 fileInput.addEventListener("change", () => {
@@ -82,13 +83,45 @@ saveBtn.addEventListener("click", async () => {
   }
 });
 
+// MARK: Export CSV Button
+// Exports the requirements to a CSV file
+exportCsvBtn.addEventListener("click", async () => {
+  try {
+    const updatedRequirements = buildRequirementsTable.extractData(window.extracted_requirements, uploadedFileName);
+
+    const response = await postData("/export_csv/", {
+      requirements: updatedRequirements,
+      pdf_path: pdfPath,
+    }, true);
+
+    if (response.error) {
+      alert("Error exporting CSV: " + response.error);
+      return;
+    }
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${(uploadedFileName || "requirements")}.replace(/\.[^/.]+$/, "")}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  } catch (err) {
+    console.error(err);
+    alert("Failed to export CSV.");
+  }
+});
+
 // MARK: Auxiliary Functions
 
 function renderResults() {
   resultsTable.innerHTML = "";
   buildRequirementsTable.render(resultsTable, window.extracted_requirements);
   classResult.style.display = "block";
-  saveBtn.style.display = "inline-block"; 
+  saveBtn.style.display = "inline-block";
+  exportCsvBtn.style.display = "inline-block"; 
 }
 
 function toggleLoading(isLoading, text = "Analyzing...") {
