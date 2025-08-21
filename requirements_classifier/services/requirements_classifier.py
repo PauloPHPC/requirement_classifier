@@ -125,8 +125,137 @@ class RequirementsClassifier:
         
         return snippets
     
-    def process_sentence(self, sentence, embeddings_sentence, sentences_pages):
-        encodings = self.multitask_tokenizer([sentence], truncation=True, padding=True, max_length=256, return_tensors="pt")
+    # def process_sentence(self, sentence, embeddings_sentence, sentences_pages):
+    #     encodings = self.multitask_tokenizer([sentence], truncation=True, padding=True, max_length=256, return_tensors="pt")
+    #     input_ids = encodings["input_ids"].to(device)
+    #     attention_mask = encodings["attention_mask"].to(device)
+
+    #     with torch.no_grad():
+    #         out = self.multitask_model(input_ids=input_ids, attention_mask=attention_mask)
+
+    #     logits_bin = out["logits_bin"].softmax(dim=1)[0]
+    #     logits_cat = out["logits_cat"].softmax(dim=1)[0]
+
+    #     label_bin_idx = logits_bin.argmax().item()
+    #     type_req = labelMap.get(f"LABEL_{label_bin_idx}", "Unknown")
+    #     confidence = round(logits_bin[label_bin_idx].item(), 4)
+
+    #     req_embedding = self.embedding_model.encode(sentence, convert_to_tensor=True)
+    #     cos_similar = util.pytorch_cos_sim(req_embedding, embeddings_sentence)[0]
+    #     idx_most_similar = cos_similar.argmax().item()
+
+    #     original_text = sentences_pages[idx_most_similar]
+    #     match_score = round(float(cos_similar[idx_most_similar]), 4)
+
+    #     result = {
+    #         "requirement": sentence,
+    #         "confidence": confidence,
+    #         "type": type_req,
+    #         "original_text": original_text,
+    #         "match_score": match_score
+    #     }
+
+    #     if type_req == "NF":
+    #         label_cat_idx = logits_cat.argmax().item()
+    #         nf_type = nfLabelMap.get(f"LABEL_{label_cat_idx}", "Unknown")
+    #         result["type"] = nf_type
+    #         result["confidence"] = round(logits_cat[label_cat_idx].item(), 4)
+        
+    #     return result
+    
+    # def process_page(self, page_content, page_number):
+    #     # web_context = self.search_web(page_content + "User software requirements as user story examples", k=5)
+    #     # extra_context = "\n".join([f"- {c}" for c in web_context])
+
+    #     # web_context_sys = self.search_web(page_content + "System software requirements examples", k=5)
+    #     # extra_context_sys = "\n".join([f"- {c}" for c in web_context_sys])
+        
+
+    #     # user_prompt_context = f"""{self.user_prompt} do not repeat user requirements. here are some examples to guide you: {extra_context}"""
+    #     # system_prompt_context = f"""{self.system_prompt} do not repeat system requirements. here are some examples to guide you: {extra_context_sys}"""
+
+    #     user_req_text = generate_requirements(self.phi4_pipeline, page_content, self.user_prompt)
+    #     system_req_text = generate_requirements(self.phi4_pipeline, page_content, self.system_prompt)
+
+    #     punkt_param = PunktParameters()
+    #     sentence_splitter = PunktSentenceTokenizer(punkt_param)
+    #     sentences_pages = sentence_splitter.tokenize(page_content)
+    #     sentences_pages = [s.strip() for s in sentences_pages if s.strip()]
+    #     embeddings_sentences = self.embedding_model.encode(sentences_pages, convert_to_tensor=True)
+
+    #     all_requirements = []
+
+    #     for req_text in [user_req_text, system_req_text]:
+    #         sentences = re.split(r"\.\s*", req_text)
+    #         sentences = [s.strip() for s in sentences if s.strip()]
+    #         for sentence in sentences:
+    #             if not re.match(r"^(As a|The )", sentence.strip(), re.IGNORECASE):
+    #                 continue
+
+    #             req_result = self.process_sentence(
+    #                 sentence,
+    #                 embeddings_sentences,
+    #                 sentences_pages
+    #             )
+    #             req_result["page"] = page_number
+    #             all_requirements.append(req_result)
+
+    #     unique_requirements = []
+    #     seen = set()
+    #     for req in all_requirements:
+    #         txt = req["requirement"].strip().lower()
+    #         if txt not in seen:
+    #             seen.add(txt)
+    #             unique_requirements.append(req)
+
+    #     return unique_requirements
+
+    
+    def process_pdf(self, pdf_path):
+        page_texts = self.pdf_utils.extract_text(pdf_path=pdf_path)
+        flat_results = []
+
+        for page_number, page_content in enumerate(page_texts, start=1):
+            if page_content and page_content.strip():
+                page_reqs = self.process_page(page_content, page_number)
+                flat_results.extend(page_reqs)
+
+        return flat_results
+
+    def find_most_similar(self, sentence, page_texts):
+        punkt_params = PunktParameters()
+        sentence_splitter = PunktSentenceTokenizer(punkt_params)
+
+        best_match = {
+            "original_text": "",
+            "match_score": 0.0,
+            "page": None
+        }
+
+        req_embedding = self.embedding_model.encode(sentence, convert_to_tensor=True)
+
+        for page_number, page_content in enumerate(page_texts, start=1):
+            sentences = sentence_splitter.tokenize(page_content)
+            sentences = [s.strip() for s in sentences if s.strip()]
+            if not sentences:
+                continue
+            
+            embeddings = self.embedding_model.encode(sentences, convert_to_tensor=True)
+            similarities = util.pytorch_cos_sim(req_embedding, embeddings)[0]
+            idx = similarities.argmax().item()
+            score = float(similarities[idx])
+
+            if score > best_match["match_score"]:
+                best_match = {
+                    "original_text": sentences[idx],
+                    "match_score": round(score, 4),
+                    "page": page_number
+                }
+
+        return best_match
+    
+    def process_sentence(self, sentence):
+        encodings = self.multitask_tokenizer([sentence], truncation=True, padding= True, max_length=256, return_tensors="pt")
         input_ids = encodings["input_ids"].to(device)
         attention_mask = encodings["attention_mask"].to(device)
 
@@ -140,19 +269,10 @@ class RequirementsClassifier:
         type_req = labelMap.get(f"LABEL_{label_bin_idx}", "Unknown")
         confidence = round(logits_bin[label_bin_idx].item(), 4)
 
-        req_embedding = self.embedding_model.encode(sentence, convert_to_tensor=True)
-        cos_similar = util.pytorch_cos_sim(req_embedding, embeddings_sentence)[0]
-        idx_most_similar = cos_similar.argmax().item()
-
-        original_text = sentences_pages[idx_most_similar]
-        match_score = round(float(cos_similar[idx_most_similar]), 4)
-
         result = {
             "requirement": sentence,
             "confidence": confidence,
-            "type": type_req,
-            "original_text": original_text,
-            "match_score": match_score
+            "type": type_req
         }
 
         if type_req == "NF":
@@ -163,42 +283,36 @@ class RequirementsClassifier:
         
         return result
     
+    def process_manual_requirement(self, sentence, pdf_path):
+        result = self.process_sentence(sentence)
+
+        page_texts = self.pdf_utils.extract_text(pdf_path)
+        best_match = self.find_most_similar(sentence, page_texts)
+
+        result.update(best_match)
+        return result
+    
     def process_page(self, page_content, page_number):
-        # web_context = self.search_web(page_content + "User software requirements as user story examples", k=5)
-        # extra_context = "\n".join([f"- {c}" for c in web_context])
-
-        # web_context_sys = self.search_web(page_content + "System software requirements examples", k=5)
-        # extra_context_sys = "\n".join([f"- {c}" for c in web_context_sys])
-        
-
-        # user_prompt_context = f"""{self.user_prompt} do not repeat user requirements. here are some examples to guide you: {extra_context}"""
-        # system_prompt_context = f"""{self.system_prompt} do not repeat system requirements. here are some examples to guide you: {extra_context_sys}"""
 
         user_req_text = generate_requirements(self.phi4_pipeline, page_content, self.user_prompt)
         system_req_text = generate_requirements(self.phi4_pipeline, page_content, self.system_prompt)
 
-        punkt_param = PunktParameters()
-        sentence_splitter = PunktSentenceTokenizer(punkt_param)
-        sentences_pages = sentence_splitter.tokenize(page_content)
-        sentences_pages = [s.strip() for s in sentences_pages if s.strip()]
-        embeddings_sentences = self.embedding_model.encode(sentences_pages, convert_to_tensor=True)
-
         all_requirements = []
 
-        for req_text in [user_req_text, system_req_text]:
-            sentences = re.split(r"\.\s*", req_text)
+        for req_texts in [user_req_text, system_req_text]:
+            sentences = re.split(r"\.\s*", req_texts)
             sentences = [s.strip() for s in sentences if s.strip()]
             for sentence in sentences:
-                if not re.match(r"^(As a|The )", sentence.strip(), re.IGNORECASE):
+                if not re.match(r"^(As a |The )", sentence.strip(), re.IGNORECASE):
                     continue
 
-                req_result = self.process_sentence(
-                    sentence,
-                    embeddings_sentences,
-                    sentences_pages
-                )
-                req_result["page"] = page_number
-                all_requirements.append(req_result)
+                result = self.process_sentence(sentence)
+                best_match = self.find_most_similar(sentence, [page_content])
+
+                result.update(best_match)
+                result["page"] = page_number
+
+                all_requirements.append(result)
 
         unique_requirements = []
         seen = set()
@@ -207,17 +321,7 @@ class RequirementsClassifier:
             if txt not in seen:
                 seen.add(txt)
                 unique_requirements.append(req)
-
+        
         return unique_requirements
 
     
-    def process_pdf(self, pdf_path):
-        page_texts = self.pdf_utils.extract_text(pdf_path=pdf_path)
-        flat_results = []
-
-        for page_number, page_content in enumerate(page_texts, start=1):
-            if page_content and page_content.strip():
-                page_reqs = self.process_page(page_content, page_number)
-                flat_results.extend(page_reqs)
-
-        return flat_results
