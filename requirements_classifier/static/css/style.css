@@ -125,6 +125,24 @@ button:disabled {
   cursor: not-allowed;
 }
 
+/*ADD REQUIREMENT AREA*/
+#manualForm {
+width: 80%;
+margin: 0 auto;
+margin-top: 20px
+}
+
+#manualRequirementInput {
+  width: 100%;
+  min-height: 40px;
+  resize: vertical;
+  margin-bottom: 8px;
+  margin: 0px;
+  font-size: 14px;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
 /*DELETE BUTTON*/
 .delete-btn {
   padding: 8px;

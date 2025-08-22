@@ -91,3 +91,20 @@ def export_csv(request):
         return resp
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=400)
+    
+@csrf_exempt
+def classify_manual_requirement(request):
+    try:
+        data = json.loads(request.body)
+        sentence = data.get("text")
+        pdf_path = data.get("pdfPath")
+
+        if not sentence:
+            return JsonResponse({"error":"Missing requirement text"}, status = 400)
+        if not pdf_path:
+            return JsonResponse({"error": "Missing PDF path."}, status = 400)
+        
+        result = REQ_CLASSIFIER.process_manual_requirement(sentence, pdf_path)
+        return JsonResponse(result)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)

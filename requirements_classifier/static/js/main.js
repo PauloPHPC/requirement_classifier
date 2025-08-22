@@ -16,6 +16,10 @@ const classResult = document.getElementById("classResult");
 const resultsTable = document.getElementById("resultsTable");
 const spinner = document.getElementById("spinner");
 const exportCsvBtn = document.getElementById("exportCsvBtn");
+const toggleManualBtn = document.getElementById("toggleManualInput")
+const manualBtn = document.getElementById("manualClassifyBtn")
+const manualForm = document.getElementById("manualForm")
+const manualInput = document.getElementById("manualRequirementInput")
 
 // Change the input name from Choose PDF to the files name
 fileInput.addEventListener("change", () => {
@@ -113,14 +117,59 @@ exportCsvBtn.addEventListener("click", async () => {
   }
 });
 
+// MARK: Add Requirement
+// Functions below are from the add manual requirements area
+
+toggleManualBtn.addEventListener("click", () => {
+  manualForm.style.display = "block";
+  manualInput.disabled = false;
+  manualBtn.disabled = false;
+  manualInput.focus();
+});
+
+manualBtn.addEventListener("click", async () => {
+  const text = manualInput.value.trim();
+  if (!text) return alert("Please type a requirement first.");
+
+  manualBtn.disabled = true;
+  manualBtn.textContent = "Adding...";
+
+  try {
+    const response = await postData("/classify_manual_requirement/", { text, pdfPath }, true);
+
+    const newRequirement = {
+      text: response.requirement,
+      aiClassification: response.type,
+      confidence: response.confidence,
+      original_text: response.original_text,
+      match_score: response.match_score,
+      page: response.page
+    };
+
+    window.extracted_requirements.push(newRequirement);
+    buildRequirementsTable.render(document.getElementById("resultsTable"), window.extracted_requirements);
+    manualInput.value = "";
+  
+  } catch (err) {
+    console.error(err);
+    alert("Failed to classify requirement.");
+  } finally {
+    manualBtn.disabled = false;
+    manualBtn.textContent = "Add"
+  }
+
+});
+
+
+
 // MARK: Auxiliary Functions
 
 function renderResults() {
   resultsTable.innerHTML = "";
   buildRequirementsTable.render(resultsTable, window.extracted_requirements);
-  classResult.style.display = "block";
   saveBtn.style.display = "inline-block";
   exportCsvBtn.style.display = "inline-block"; 
+  toggleManualBtn.disabled = false;
 }
 
 function toggleLoading(isLoading, text = "Analyzing...") {
