@@ -31,6 +31,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.runpod.net",
+    "http://localhost:8000",
+]
 
 # Application definition
 
