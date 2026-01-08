@@ -3,7 +3,7 @@ set -euo pipefail
 
 APP_DIR="${APP_DIR:-/app}"
 ENV_FILE="${ENV_FILE:-$APP_DIR/.env}"
-REQ_CLASSIFIER_DIR="${REQ_CLASSIFIER_DIR:-$APP_DIR/requirements_classifier}"
+REQ_CLASSIFIER_DIR="${REQ_CLASSIFIER_DIR:-$APP_DIR/requirements_classifier/distilbert}"
 
 cd "$APP_DIR"
 
