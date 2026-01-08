@@ -27,15 +27,15 @@ fi
 
 touch "$ENV_FILE"
 
-if ! grep -qE '^DJANGO_SECRET_KEY=' "$ENV_FILE"; then
-  echo ">> Gerando DJANGO_SECRET_KEY no .env"
-  SECRET_KEY="$(python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())")"
-  printf "DJANGO_SECRET_KEY='%s'\n" "$SECRET_KEY" >> "$ENV_FILE"
+if ! grep -qE '^SECRET_KEY=' "$ENV_FILE"; then
+  echo ">> Gerando SECRET_KEY no .env"
+  SECRET_KEY_VAL="$(python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())")"
+  printf "SECRET_KEY='%s'\n" "$SECRET_KEY_VAL" >> "$ENV_FILE"
 else
-  SECRET_KEY="$(grep -E '^DJANGO_SECRET_KEY=' "$ENV_FILE" | head -n1 | cut -d= -f2- | sed -e \"s/^'//\" -e \"s/'$//\")"
+  SECRET_KEY_VAL="$(grep -E '^SECRET_KEY=' "$ENV_FILE" | head -n1 | cut -d= -f2- | sed -e "s/^'//" -e "s/'$//")"
 fi
 
-export DJANGO_SECRET_KEY="$SECRET_KEY"
+export SECRET_KEY="$SECRET_KEY_VAL"
 
 python manage.py collectstatic --noinput || true
 python manage.py migrate --noinput || true
