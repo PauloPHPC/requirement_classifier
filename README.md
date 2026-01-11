@@ -10,7 +10,7 @@ The models are:
 Since this tool uses AI models heavily, the recommended setups are:
 - Python 3.12;
 - Linux or Windows systems;
-- NVIDIA GPU with 12+ GB of VRAM are recommended.\
+- NVIDIA GPU with 12+ GB of VRAM.\
 *(It may run with less VRAM on Windows (using part of the system RAM) but performance can degrade significantly)*
 
 ## How to run (developer version):
