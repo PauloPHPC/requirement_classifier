@@ -6,6 +6,12 @@ from pathlib import Path
 
 from huggingface_hub import snapshot_download
 
+if os.getenv("HF_HUB_ENABLE_HF_TRANSFER") == "1":
+    try:
+        import hf_transfer  # noqa: F401
+    except Exception:
+        os.environ["HF_HUB_ENABLE_HF_TRANSFER"] = "0"
+
 try:
     from django.core.management.utils import get_random_secret_key
 except Exception:
@@ -18,7 +24,7 @@ DEFAULT_DEST = Path("requirements_classifier") / "distilbert"
 
 
 def _project_root() -> Path:
-    return Path(__file__).resolve().parents[1]
+    return Path(__file__).resolve().parent
 
 
 def _is_nonempty_dir(p: Path) -> bool:
