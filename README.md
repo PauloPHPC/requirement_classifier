@@ -10,8 +10,7 @@ The models are:
 Since this tool uses AI models heavily, the recommended setups are:
 - Python 3.12;
 - Linux or Windows systems;
-- NVIDIA GPU with 12+ GB of VRAM.\
-*(It may run with less VRAM on Windows (using part of the system RAM) but performance can degrade significantly)*
+- NVIDIA GPU with 12+ GB of VRAM[^1].
 
 ## How to run (developer version):
 
@@ -28,14 +27,14 @@ cd requirement_classifier
 ### 3. Generate a Python venv and install requirements.txt
 
 - Windows (CMD):
-```bat
+```Batchfile
 python3 -m venv venv
 venv/Scripts/activate.bat
 pip install -r requirements.txt
 ```
 
 - Windows (Powershell):
-```powershell
+```PowerShell
 python3 -m venv venv
 .\venv\Scripts\Activate.ps1
 pip install -r requirements.txt
@@ -48,12 +47,13 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 4. Download the requirements classifier model and generate .env with django secret key
-*The requirements classifier model is avalible at [HuggingFace](https://huggingface.co/PauloHPCerqueira/distillbert-requirements-classifier-mtl)*
+### 4. Download the requirements classifier model and generate .env with django secret key[^2]
+
 ```bash
 python project_config.py
 ```
-**Make sure .env is in .gitignore!**
+>[!CAUTION]
+>Make sure .env is in .gitignore!
 
 ### 5. Migrate the database tables
 ```bash
@@ -64,3 +64,6 @@ python manage.py migrate
 ```bash
 python manage.py runserver 0.0.0.0:8000
 ```
+
+[^1]: It may run with less VRAM on Windows (using part of the system RAM) but performance can degrade significantly
+[^2]: The requirements classifier model is avalible at [HuggingFace](https://huggingface.co/PauloHPCerqueira/distillbert-requirements-classifier-mtl)
