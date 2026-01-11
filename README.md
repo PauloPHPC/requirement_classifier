@@ -2,6 +2,10 @@
 
 The *requirement_classifier* tool uses two AI models for documenting requirements from a PDF source and classifying them according to the PROMISE+ dataset classification (Functional and Non-Functional classes like Security, Availability, Maintainability...).
 
+The models are:
+* Phi-4-mini-instruct by [Microsoft](https://huggingface.co/microsoft/Phi-4-mini-instruct) for the requirement documentation.
+* A trained version of [distilbert](https://huggingface.co/distilbert/distilbert-base-uncased) for classification.
+
 ## Requirements
 Since this tool uses AI models heavily, the recommended setups are:
 - Python 3.12;
